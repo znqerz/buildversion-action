@@ -1,0 +1,13 @@
+name: 'buildversion-action'
+description: 'Get build versions from versions file'
+author: 'eric'
+inputs:
+  file-path: 
+    required: true
+    description: 'Versions file full path'
+  run-number:
+    required: true
+    description: 'Github run_number or random number'
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
