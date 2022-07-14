@@ -8,24 +8,17 @@ export function directoryExistsSync(path: string, required?: boolean): boolean {
   let stats: fs.Stats
   try {
     stats = fs.statSync(path)
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      if (!required) {
-        return false
-      }
-
-      throw new Error(`Directory '${path}' does not exist`)
+    if (stats.isDirectory()) {
+      return true
+    } else if (!required) {
+      return false
     }
-
-    throw new Error(
-      `Encountered an error when checking whether path '${path}' exists: ${error.message}`
-    )
-  }
-
-  if (stats.isDirectory()) {
-    return true
-  } else if (!required) {
-    return false
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(
+        `Encountered an error when checking whether path '${path}' exists: ${error.message}`
+      )
+    }
   }
 
   throw new Error(`Directory '${path}' does not exist`)
@@ -39,13 +32,11 @@ export function existsSync(path: string): boolean {
   try {
     fs.statSync(path)
   } catch (error) {
-    if (error.code === 'ENOENT') {
-      return false
+    if (error instanceof Error) {
+      throw new Error(
+        `Encountered an error when checking whether path '${path}' exists: ${error.message}`
+      )
     }
-
-    throw new Error(
-      `Encountered an error when checking whether path '${path}' exists: ${error.message}`
-    )
   }
 
   return true
@@ -59,18 +50,15 @@ export function fileExistsSync(path: string): boolean {
   let stats: fs.Stats
   try {
     stats = fs.statSync(path)
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      return false
+    if (!stats.isDirectory()) {
+      return true
     }
-
-    throw new Error(
-      `Encountered an error when checking whether path '${path}' exists: ${error.message}`
-    )
-  }
-
-  if (!stats.isDirectory()) {
-    return true
+  } catch (error) {
+    if (error instanceof Error) {
+      throw new Error(
+        `Encountered an error when checking whether path '${path}' exists: ${error.message}`
+      )
+    }
   }
 
   return false
